@@ -37,10 +37,9 @@ def paths(gr, frm, to, path_len=0, visited=None):
 #Обход всех вершин графа (в глубину)
 #После очередного варианта прохода всех вершин в minResults записывается длина этого пути
 def traverse(gr, frm, visited=None, prevMin=0):
-    #print("prev" + str(prevMin))
     visited = visited or []
     if (frm not in visited): visited.append(frm)
-    # Анализ всех вершин, до котрых от frm есть прямой путь
+    #Анализ всех вершин, до котрых от frm есть прямой путь
     for point in gr:
         if point[0] in visited:
             continue
