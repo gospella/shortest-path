@@ -1,70 +1,14 @@
 # shortest-path
 
-#Ввод данных
-n = int(input())
-gr = {}
-for x in range(n):
-    tmp = input().split(" ")
-    tm = {}
-    for y in range(n):
-        if(tmp[y] == '0'): continue
-        tm[str(y)] = int(tmp[int(y)])
-    gr[str(x)] = tm
+Дан граф G(V, E) G(V,E)  с компонентой связности равной 1. Граф задается матрицей расстояний между вершинами distance_matrix, где distance_matrix[i][j] - расстояние между i и j вершинами. Если distance_matrix[i][j] = 0, то не существует пути из i вершины в j. Необходимо пройти по всем вершинам и вернутся в исходную так, чтобы суммарный путь был минимальным. Начало пути следует начинать с первой вершины. Разрешается проходить по одной вершине несколько раз.
 
-#print(gr)
+На вход программы подается в первой строке количество вершин n, далее следует матрица расстояний. 
+Данные записываются в словарь (номер вершины - ключ) и хранятся в виде: 
+{'0': {'1': 2, '2': 2}, '1': {'0': 2, '2': 2, '3': 2}, '2': {'0': 2, '1': 2, '4': 2}, '3': {'1': 2}, '4': {'2': 2}}
 
-#Стартовое значение
-startPoint = '0'
-minResults = []
+функция traverse() обходит граф (из стартовой точки '0') и ищет пути, содержащие все вершины.
+функция paths() ищет пути из вершины frm до to, из которых в последствии выбирается кратчайший.
 
-#paths: Поиск путей между двумя вершинами
-#Возвращает список возможных решений
-def paths(gr, frm, to, path_len=0, visited=None):
-    if frm == to:
-        return [path_len]
-    visited = visited or []
-    result = []
-    # Анализ всех вершин, до котрых от frm есть прямой путь
-    for point, length in gr[frm].items():
-        if point in visited:
-            continue
-        visited.append(point)
-        for sub_path in paths(gr, point, to, path_len + length, visited[:]):
-            result.append(sub_path)
-    #print(result)
-    return result
-
-#Обход всех вершин графа (в глубину)
-#После очередного варианта прохода всех вершин в minResults записывается длина этого пути
-def traverse(gr, frm, visited=None, prevMin=0):
-    visited = visited or []
-    if (frm not in visited): visited.append(frm)
-    #Анализ всех вершин, до котрых от frm есть прямой путь
-    for point in gr:
-        if point[0] in visited:
-            continue
-        minPthFrmToPoint = 0
-        if(point[0] in gr[frm]):
-            minPthFrmToPoint = gr[frm][point[0]]
-        else:
-            minPthFrmToPoint = min(paths(gr,frm, point[0]))
-        pathMin = prevMin + minPthFrmToPoint
-        if(len(minResults) and pathMin >= minResults[0]):
-            #print("bad:" + frm + " to " + point[0] + ", curmin:" + str(pathMin))
-            continue
-        #print(frm + " to " + point[0] + ", curmin:" + str(pathMin))
-        traverse(gr, point[0], visited[:], pathMin)
-    else:
-        if (len(visited) == n):
-            minPthFrEndtoStart = 0
-            if (startPoint in gr[visited[-1]]):
-                minPthFrEndtoStart = prevMin + gr[visited[-1]][startPoint]
-            else:
-                minPthFrEndtoStart = prevMin + min(paths(gr, visited[-1], startPoint))
-            minResults.append(minPthFrEndtoStart)
-    return
-
-traverse(gr, startPoint)
-
-print(minResults)
-print(min(minResults))
+После очередного варианта прохода, содержащего все вершины, в minResults записывается длина пути.
+Финальный вариант списка minResults может выглядеть следующим образом (всего 24 вариантов обхода, минимальное значение пути - '14'):
+[18, 16, 14, 14, 16, 18, 16, 18, 16, 18, 14, 14, 14, 14, 18, 16, 18, 16, 18, 16, 14, 14, 16, 18]
